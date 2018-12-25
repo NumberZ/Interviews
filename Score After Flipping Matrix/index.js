@@ -12,7 +12,7 @@ var matrixScore = function(A) {
   }
   const convertRow = (arr, row) => {
       for (let i = 0; i < arr[row].length; i++) {
-          arr[row][i] = ^arr[row][i] ? 0 : 1;
+          arr[row][i] = arr[row][i] ? 0 : 1;
       }
   }
   
