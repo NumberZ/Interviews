@@ -17,3 +17,5 @@ var nextGreaterElements = function(nums) {
 }
 ```
 题目的关键点在于是否可以充分利用栈这个数据结构.
+
+而栈存储的为数组的下标
