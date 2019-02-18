@@ -60,15 +60,4 @@ class BST {
     return _min(node.left);
   }
 
-  select(key) {
-    return this._select(this.root, key);
-  }
-
-  _select(node, key) {
-    if (node === null) return null;
-    const t = size(node.left);
-    if (t > key) { 
-      
-    }
-  }
 }
