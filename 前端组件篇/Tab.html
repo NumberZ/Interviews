@@ -1,0 +1,124 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+    <style>
+      .container {
+        width: 400px;
+      }
+      .tab-title-items {
+        display: flex;
+      }
+      .tab-title-item {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #333;
+      }
+      .tab-title-item.active {
+        background: #333;
+        color: #fff;
+      }
+      .tab-content-item {
+        display: none;
+      }
+      .tab-content-item.active {
+        display: block;
+      }
+      .red {
+        background: red;
+      }
+      .green {
+        background: green;
+      }
+      .yellow {
+        background: yellow;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="text/babel">
+      class TabsControl extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            currentIndex: 0
+          };
+        }
+
+        handleClick = index => () => {
+          this.setState({
+            currentIndex: index
+          });
+        };
+        render() {
+          const { currentIndex } = this.state;
+          return (
+            <div>
+              <nav className="tab-title-items">
+                {React.Children.map(this.props.children, (children, index) => {
+                  const isActive = currentIndex === index;
+                  return (
+                    <div
+                      className={
+                        isActive ? 'tab-title-item active' : 'tab-title-item'
+                      }
+                      onClick={this.handleClick(index)}
+                    >
+                      {children.props.name}
+                    </div>
+                  );
+                })}
+              </nav>
+              <div className="tab-contents-items">
+                {React.Children.map(this.props.children, (element, index) => {
+                  const isActive = currentIndex === index;
+                  return (
+                    <div
+                      className={
+                        isActive ? 'tab-content-item active' : 'tab-content-item'
+                      }
+                    >
+                      {element}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        }
+      }
+
+      class Tab extends React.Component {
+        render() {
+          return <div>{this.props.children}</div>;
+        }
+      }
+      class App extends React.Component {
+        render() {
+          return (
+            <div className="container">
+              <TabsControl baseWidth={400}>
+                <Tab name="red">
+                  <div className="red">我是红色的标签页</div>
+                </Tab>
+                <Tab name="blue">
+                  <div className="blue">我是蓝色的标签页</div>
+                </Tab>
+                <Tab name="yellow">
+                  <div className="yellow">我是黄色的标签页</div>
+                </Tab>
+              </TabsControl>
+            </div>
+          );
+        }
+      }
+      ReactDOM.render(<App />, document.getElementById('app'));
+    </script>
+  </body>
+</html>

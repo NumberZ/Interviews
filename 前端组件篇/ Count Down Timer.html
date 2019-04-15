@@ -1,0 +1,60 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="text/jsx">
+      class CounterDown extends React.Component {
+          constructor(props) {
+             super(props);
+             this.state = {
+                remain: 34 * 60 * 60 * 1000,
+             }
+          }
+          setTimer = () => {
+             this.setState((preState) => {
+                return {
+                   remain: preState.remain - 1000,
+                }
+             })
+          }
+          handleStart = () => {
+             this.timer = setInterval(this.setTimer, 1000);
+          }
+          handleStop = () => {
+             clearInterval(this.timer);
+          }
+          handleReset = () => {
+             this.handleStop();
+             this.setState({
+                remain: 3 * 60 * 60 * 1000,
+             })
+          }
+
+          render() {
+             const {remain} = this.state;
+             const hh = Math.floor((remain / (60 * 60 * 1000))).toString().padStart(2,0);
+             const mm = Math.floor(remain % (60 * 60 * 1000) / (60 * 1000)).toString().padStart(2, 0);
+             const ss = Math.floor(remain % (60 * 1000) / 1000).toString().padStart(2, 0);
+            return (
+            <div id="container">
+                <div id="countdown-timer" style={{marignBottom: '20px', fontSize: '22px', color: 'red'}}>
+                   <span className="hour">{hh}</span>:<span className="minute">{mm}</span>:<span className="second">{ss}</span>
+                </div>
+                <div className="buttons">
+                   <button id="start" onClick={this.handleStart}>Start</button>
+                   <button id="stop" onClick={this.handleStop}>Stop</button>
+                   <button id="reset" onClick={this.handleReset}>Reset</button>
+                </div>
+          </div>)
+          }
+       }
+       ReactDOM.render(<CounterDown />, document.getElementById('app') );
+    </script>
+  </body>
+</html>

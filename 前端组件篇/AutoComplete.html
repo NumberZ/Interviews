@@ -1,0 +1,389 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      .autocomplete {
+        position: relative;
+        width: 300px;
+        display: inline-block;
+      }
+      .autocomplete-input {
+        width: 100%;
+        height: 40px;
+        padding: 5px;
+      }
+      .submit-btn {
+        width: 80px;
+      }
+      .autocomplete-items {
+        padding: 0px;
+        margin: 0px;
+        position: absolute;
+        top: 100%;
+        left: 0px;
+        width: 300px;
+        border: 1px solid #e2e2e2;
+        border-top: none;
+      }
+      .autocomplete-item {
+        padding: 5px;
+        border-bottom: 1px solid #d4d4d4;
+        list-style: none;
+        height: 30px;
+        width: 100%;
+        cursor: pointer;
+      }
+      .autocomplete-item_avtice {
+        background-color: DodgerBlue !important;
+        color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="text/babel">
+      class AutoComplete extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            value: '',
+            matches: [],
+            activeIndex: -1
+          };
+        }
+
+        handleInput = e => {
+          const { data } = this.props;
+          const val = e.target.value;
+          const matches = [];
+          this.setState({
+            value: val,
+            activeIndex: -1
+          });
+          if (val) {
+            for (let i = 0; i < data.length; i++) {
+              const item = data[i].substr(0, val.length);
+              if (item.toUpperCase() === val.toUpperCase()) {
+                matches.push(data[i]);
+              }
+            }
+          }
+          this.setState({
+            matches
+          });
+        };
+
+        handleKeyDown = e => {
+          const { matches } = this.state;
+          let activeIndex = this.state.activeIndex;
+
+          if (e.keyCode === 40) {
+            if (activeIndex >= matches.length - 1) {
+              activeIndex = -1;
+            }
+            this.setState({
+              activeIndex: activeIndex + 1
+            });
+          }
+          if (e.keyCode === 38) {
+            if (activeIndex <= 0) {
+              activeIndex = matches.length;
+            }
+            this.setState({
+              activeIndex: activeIndex - 1
+            });
+          }
+
+          if (e.keyCode === 13) {
+            e.preventDefault();
+            this.setState({
+              value: activeIndex < 0 ? '' : matches[activeIndex],
+              matches: []
+            });
+          }
+        };
+
+        handleClickItem = item => () => {
+          this.setState({
+            value: item,
+            matches: []
+          });
+        };
+
+        render() {
+          const { value, matches, activeIndex } = this.state;
+          return (
+            <form autocomplete="off">
+              <div className="autocomplete">
+                <input
+                  className="autocomplete-input"
+                  value={value}
+                  onChange={this.handleInput}
+                  onKeyDown={this.handleKeyDown}
+                />
+                {matches.length > 0 ? (
+                  <ul className="autocomplete-items">
+                    {matches.map((item, index) => {
+                      const len = value.length;
+                      return (
+                        <li
+                          key={item}
+                          className={`autocomplete-item ${
+                            activeIndex === index
+                              ? 'autocomplete-item_avtice'
+                              : ''
+                          }`}
+                          onClick={this.handleClickItem(item)}
+                        >
+                          <strong>{item.substr(0, len)}</strong>
+                          {item.substr(len)}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : null}
+              </div>
+              <button className="submit-btn">Submit</button>
+            </form>
+          );
+        }
+      }
+
+      const countries = [
+        'Afghanistan',
+        'Albania',
+        'Algeria',
+        'Andorra',
+        'Angola',
+        'Anguilla',
+        'Antigua &amp; Barbuda',
+        'Argentina',
+        'Armenia',
+        'Aruba',
+        'Australia',
+        'Austria',
+        'Azerbaijan',
+        'Bahamas',
+        'Bahrain',
+        'Bangladesh',
+        'Barbados',
+        'Belarus',
+        'Belgium',
+        'Belize',
+        'Benin',
+        'Bermuda',
+        'Bhutan',
+        'Bolivia',
+        'Bosnia &amp; Herzegovina',
+        'Botswana',
+        'Brazil',
+        'British Virgin Islands',
+        'Brunei',
+        'Bulgaria',
+        'Burkina Faso',
+        'Burundi',
+        'Cambodia',
+        'Cameroon',
+        'Canada',
+        'Cape Verde',
+        'Cayman Islands',
+        'Central Arfrican Republic',
+        'Chad',
+        'Chile',
+        'China',
+        'Colombia',
+        'Congo',
+        'Cook Islands',
+        'Costa Rica',
+        'Cote D Ivoire',
+        'Croatia',
+        'Cuba',
+        'Curacao',
+        'Cyprus',
+        'Czech Republic',
+        'Denmark',
+        'Djibouti',
+        'Dominica',
+        'Dominican Republic',
+        'Ecuador',
+        'Egypt',
+        'El Salvador',
+        'Equatorial Guinea',
+        'Eritrea',
+        'Estonia',
+        'Ethiopia',
+        'Falkland Islands',
+        'Faroe Islands',
+        'Fiji',
+        'Finland',
+        'France',
+        'French Polynesia',
+        'French West Indies',
+        'Gabon',
+        'Gambia',
+        'Georgia',
+        'Germany',
+        'Ghana',
+        'Gibraltar',
+        'Greece',
+        'Greenland',
+        'Grenada',
+        'Guam',
+        'Guatemala',
+        'Guernsey',
+        'Guinea',
+        'Guinea Bissau',
+        'Guyana',
+        'Haiti',
+        'Honduras',
+        'Hong Kong',
+        'Hungary',
+        'Iceland',
+        'India',
+        'Indonesia',
+        'Iran',
+        'Iraq',
+        'Ireland',
+        'Isle of Man',
+        'Israel',
+        'Italy',
+        'Jamaica',
+        'Japan',
+        'Jersey',
+        'Jordan',
+        'Kazakhstan',
+        'Kenya',
+        'Kiribati',
+        'Kosovo',
+        'Kuwait',
+        'Kyrgyzstan',
+        'Laos',
+        'Latvia',
+        'Lebanon',
+        'Lesotho',
+        'Liberia',
+        'Libya',
+        'Liechtenstein',
+        'Lithuania',
+        'Luxembourg',
+        'Macau',
+        'Macedonia',
+        'Madagascar',
+        'Malawi',
+        'Malaysia',
+        'Maldives',
+        'Mali',
+        'Malta',
+        'Marshall Islands',
+        'Mauritania',
+        'Mauritius',
+        'Mexico',
+        'Micronesia',
+        'Moldova',
+        'Monaco',
+        'Mongolia',
+        'Montenegro',
+        'Montserrat',
+        'Morocco',
+        'Mozambique',
+        'Myanmar',
+        'Namibia',
+        'Nauro',
+        'Nepal',
+        'Netherlands',
+        'Netherlands Antilles',
+        'New Caledonia',
+        'New Zealand',
+        'Nicaragua',
+        'Niger',
+        'Nigeria',
+        'North Korea',
+        'Norway',
+        'Oman',
+        'Pakistan',
+        'Palau',
+        'Palestine',
+        'Panama',
+        'Papua New Guinea',
+        'Paraguay',
+        'Peru',
+        'Philippines',
+        'Poland',
+        'Portugal',
+        'Puerto Rico',
+        'Qatar',
+        'Reunion',
+        'Romania',
+        'Russia',
+        'Rwanda',
+        'Saint Pierre &amp; Miquelon',
+        'Samoa',
+        'San Marino',
+        'Sao Tome and Principe',
+        'Saudi Arabia',
+        'Senegal',
+        'Serbia',
+        'Seychelles',
+        'Sierra Leone',
+        'Singapore',
+        'Slovakia',
+        'Slovenia',
+        'Solomon Islands',
+        'Somalia',
+        'South Africa',
+        'South Korea',
+        'South Sudan',
+        'Spain',
+        'Sri Lanka',
+        'St Kitts &amp; Nevis',
+        'St Lucia',
+        'St Vincent',
+        'Sudan',
+        'Suriname',
+        'Swaziland',
+        'Sweden',
+        'Switzerland',
+        'Syria',
+        'Taiwan',
+        'Tajikistan',
+        'Tanzania',
+        'Thailand',
+        "Timor L'Este",
+        'Togo',
+        'Tonga',
+        'Trinidad &amp; Tobago',
+        'Tunisia',
+        'Turkey',
+        'Turkmenistan',
+        'Turks &amp; Caicos',
+        'Tuvalu',
+        'Uganda',
+        'Ukraine',
+        'United Arab Emirates',
+        'United Kingdom',
+        'United States of America',
+        'Uruguay',
+        'Uzbekistan',
+        'Vanuatu',
+        'Vatican City',
+        'Venezuela',
+        'Vietnam',
+        'Virgin Islands (US)',
+        'Yemen',
+        'Zambia',
+        'Zimbabwe'
+      ];
+      ReactDOM.render(
+        <AutoComplete data={countries} />,
+        document.getElementById('app')
+      );
+    </script>
+  </body>
+</html>

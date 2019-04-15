@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      input {
+        border: 1px solid #f1f1f1;
+        padding: 10px;
+      }
+      input[type='text'] {
+        width: 100%;
+      }
+      .submit-btn {
+        background-color: DodgerBlue;
+        color: #fff;
+        border: 1px solid transparent;
+        padding: 10px;
+        font-size: 16px;
+      }
+      .autocomplete {
+        width: 300px;
+        position: relative;
+        display: inline-block;
+      }
+      .autocomplete-items {
+        position: absolute;
+        left: 0px;
+        margin: 0px;
+        padding: 0px;
+        top: 100%;
+        width: 100%;
+        border: 1px solid #d4d4d4;
+        border-top: none;
+      }
+
+      .autocomplete-items li {
+        list-style: none;
+        cursor: pointer;
+        border-bottom: 1px solid #d4d4d4;
+        padding: 10px;
+      }
+      .autocomplete-active {
+        /*when navigating through the items using the arrow keys:*/
+        background-color: DodgerBlue !important;
+        color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <form autocomplete="off">
+      <div class="autocomplete">
+        <input id="myInput" class="my-input" type="text" />
+      </div>
+      <button class="submit-btn" type="submit">Submit</button>
+    </form>
+    <script>
+      function autocomplete(inp, data) {;
+        let currentFocused = -1;
+        inp.addEventListener('input', function() {
+          clearAllList();
+          let value = this.value;
+          if (!value) return;
+          currentFocused = -1;
+          const container = document.createElement('ul');
+          container.setAttribute('class', 'autocomplete-items');
+          this.parentNode.appendChild(container);
+          value = value.toUpperCase();
+          for (let i = 0; i < data.length; i++) {
+            const item = data[i].substr(0, value.length);
+            if (item.toUpperCase() === value) {
+              const li = document.createElement('li');
+              li.innerHTML = '<strong>' + item + '</strong>';
+              li.innerHTML += data[i].substr(value.length);
+              li.addEventListener('click', function(e) {
+                inp.value = this.innerText;
+                clearAllList();
+              });
+              container.appendChild(li);
+            }
+          }
+        });
+
+        inp.addEventListener('keydown', function(e) {
+          const container = document.getElementsByClassName(
+            'autocomplete-items'
+          )[0];
+          const items = container && container.getElementsByTagName('li');
+          if (e.keyCode === 40) {
+            currentFocused++;
+            activeList(items);
+          }
+          if (e.keyCode === 38) {
+            currentFocused--;
+            activeList(items);
+          }
+          if (e.keyCode === 13) {
+            e.preventDefault();
+            items[currentFocused].click();
+          }
+        });
+
+        function activeList(items) {
+          removeActive(items);
+          if (currentFocused >= items.length) {
+            currentFocused = 0;
+          }
+          if (currentFocused < 0) {
+            currentFocused = items.length - 1;
+          }
+          if (items) {
+            items[currentFocused].classList.add('autocomplete-active');
+          }
+        }
+
+        function removeActive(items) {
+          for (let i = 0; i < items.length; i++) {
+            items[i].classList.remove('autocomplete-active');
+          }
+        }
+        function clearAllList() {
+          const container = document.getElementsByClassName(
+            'autocomplete-items'
+          )[0];
+          container && container.parentNode.removeChild(container);
+        }
+      }
+      const countries = [
+        'Afghanistan',
+        'Albania',
+        'Algeria',
+        'Andorra',
+        'Angola',
+        'Anguilla',
+        'Antigua &amp; Barbuda',
+        'Argentina',
+        'Armenia',
+        'Aruba',
+        'Australia',
+        'Austria',
+        'Azerbaijan',
+        'Bahamas',
+        'Bahrain',
+        'Bangladesh',
+        'Barbados',
+        'Belarus',
+        'Belgium',
+        'Belize',
+        'Benin',
+        'Bermuda',
+        'Bhutan',
+        'Bolivia',
+        'Bosnia &amp; Herzegovina',
+        'Botswana',
+        'Brazil',
+        'British Virgin Islands',
+        'Brunei',
+        'Bulgaria',
+        'Burkina Faso',
+        'Burundi',
+        'Cambodia',
+        'Cameroon',
+        'Canada',
+        'Cape Verde',
+        'Cayman Islands',
+        'Central Arfrican Republic',
+        'Chad',
+        'Chile',
+        'China',
+        'Colombia',
+        'Congo',
+        'Cook Islands',
+        'Costa Rica',
+        'Cote D Ivoire',
+        'Croatia',
+        'Cuba',
+        'Curacao',
+        'Cyprus',
+        'Czech Republic',
+        'Denmark',
+        'Djibouti',
+        'Dominica',
+        'Dominican Republic',
+        'Ecuador',
+        'Egypt',
+        'El Salvador',
+        'Equatorial Guinea',
+        'Eritrea',
+        'Estonia',
+        'Ethiopia',
+        'Falkland Islands',
+        'Faroe Islands',
+        'Fiji',
+        'Finland',
+        'France',
+        'French Polynesia',
+        'French West Indies',
+        'Gabon',
+        'Gambia',
+        'Georgia',
+        'Germany',
+        'Ghana',
+        'Gibraltar',
+        'Greece',
+        'Greenland',
+        'Grenada',
+        'Guam',
+        'Guatemala',
+        'Guernsey',
+        'Guinea',
+        'Guinea Bissau',
+        'Guyana',
+        'Haiti',
+        'Honduras',
+        'Hong Kong',
+        'Hungary',
+        'Iceland',
+        'India',
+        'Indonesia',
+        'Iran',
+        'Iraq',
+        'Ireland',
+        'Isle of Man',
+        'Israel',
+        'Italy',
+        'Jamaica',
+        'Japan',
+        'Jersey',
+        'Jordan',
+        'Kazakhstan',
+        'Kenya',
+        'Kiribati',
+        'Kosovo',
+        'Kuwait',
+        'Kyrgyzstan',
+        'Laos',
+        'Latvia',
+        'Lebanon',
+        'Lesotho',
+        'Liberia',
+        'Libya',
+        'Liechtenstein',
+        'Lithuania',
+        'Luxembourg',
+        'Macau',
+        'Macedonia',
+        'Madagascar',
+        'Malawi',
+        'Malaysia',
+        'Maldives',
+        'Mali',
+        'Malta',
+        'Marshall Islands',
+        'Mauritania',
+        'Mauritius',
+        'Mexico',
+        'Micronesia',
+        'Moldova',
+        'Monaco',
+        'Mongolia',
+        'Montenegro',
+        'Montserrat',
+        'Morocco',
+        'Mozambique',
+        'Myanmar',
+        'Namibia',
+        'Nauro',
+        'Nepal',
+        'Netherlands',
+        'Netherlands Antilles',
+        'New Caledonia',
+        'New Zealand',
+        'Nicaragua',
+        'Niger',
+        'Nigeria',
+        'North Korea',
+        'Norway',
+        'Oman',
+        'Pakistan',
+        'Palau',
+        'Palestine',
+        'Panama',
+        'Papua New Guinea',
+        'Paraguay',
+        'Peru',
+        'Philippines',
+        'Poland',
+        'Portugal',
+        'Puerto Rico',
+        'Qatar',
+        'Reunion',
+        'Romania',
+        'Russia',
+        'Rwanda',
+        'Saint Pierre &amp; Miquelon',
+        'Samoa',
+        'San Marino',
+        'Sao Tome and Principe',
+        'Saudi Arabia',
+        'Senegal',
+        'Serbia',
+        'Seychelles',
+        'Sierra Leone',
+        'Singapore',
+        'Slovakia',
+        'Slovenia',
+        'Solomon Islands',
+        'Somalia',
+        'South Africa',
+        'South Korea',
+        'South Sudan',
+        'Spain',
+        'Sri Lanka',
+        'St Kitts &amp; Nevis',
+        'St Lucia',
+        'St Vincent',
+        'Sudan',
+        'Suriname',
+        'Swaziland',
+        'Sweden',
+        'Switzerland',
+        'Syria',
+        'Taiwan',
+        'Tajikistan',
+        'Tanzania',
+        'Thailand',
+        "Timor L'Este",
+        'Togo',
+        'Tonga',
+        'Trinidad &amp; Tobago',
+        'Tunisia',
+        'Turkey',
+        'Turkmenistan',
+        'Turks &amp; Caicos',
+        'Tuvalu',
+        'Uganda',
+        'Ukraine',
+        'United Arab Emirates',
+        'United Kingdom',
+        'United States of America',
+        'Uruguay',
+        'Uzbekistan',
+        'Vanuatu',
+        'Vatican City',
+        'Venezuela',
+        'Vietnam',
+        'Virgin Islands (US)',
+        'Yemen',
+        'Zambia',
+        'Zimbabwe'
+      ];
+
+      autocomplete(document.getElementById('myInput'), countries);
+    </script>
+  </body>
+</html>

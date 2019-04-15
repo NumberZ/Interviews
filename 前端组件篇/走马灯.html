@@ -1,0 +1,150 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+    <style>
+      .wrapper {
+        width: 200px;
+        overflow: hidden;
+      }
+      .container {
+        height: 200px;
+      }
+      .item {
+        display: inline-block;
+        width: 200px;
+        height: 200px;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="text/babel">
+      class Carousel extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            activeIndex: 1,
+            offset: -this.props.width
+          };
+        }
+
+        componentDidMount() {
+          const { activeIndex } = this.state;
+          if (this.props.autoplay) {
+            this.timer = setInterval(() => {
+              let activeIndex = this.state.activeIndex;
+              this.setIndex(activeIndex + 1);
+            }, 2000);
+          }
+        }
+        setIndex = index => {
+          let nextIndex = index;
+          const len = this.props.children.length;
+          const { width } = this.props;
+          let start = null;
+          this.setState({
+            activeIndex: nextIndex
+          });
+          const currentOffset = this.state.offset;
+          const nextOffset = -nextIndex * this.props.width;
+          const move = timestamp => {
+            if (!start) {
+              start = timestamp;
+            }
+            const progress = timestamp - start;
+
+            this.setState({
+              offset:
+                currentOffset + ((nextOffset - currentOffset) * progress) / 1000
+            });
+            if (progress < 1000) {
+              window.animationID = requestAnimationFrame(move);
+            } else {
+              if (nextIndex === 0) {
+                nextIndex = len;
+              } else if (nextIndex === len + 1) {
+                nextIndex = 1;
+              }
+              this.setState({
+                activeIndex: nextIndex,
+                offset: -nextIndex * width
+              });
+            }
+          };
+          requestAnimationFrame(move);
+        };
+        componentWillMount() {
+          this.timer && clearInterval(this.timer);
+          cancelAnimationFrame(window.animationID);
+        }
+        render() {
+          const len = this.props.children.length;
+          const { activeIndex, offset } = this.state;
+          const containerStyle = {
+            width: (len + 2) * 200 + 'px',
+            transform: `translate(${offset}px, 0px)`,
+            WebkitTransform: `translate(${offset}px, 0px)`
+          };
+
+          const appendChild = [
+            this.props.children[len - 1],
+            ...this.props.children,
+            this.props.children[0]
+          ];
+          return (
+            <div className="wrapper">
+              <div className="container" style={containerStyle}>
+                {React.Children.map(appendChild, (child, index) => {
+                  return (
+                    <div
+                      className="item"
+                      style={{
+                        border: '1px solid #000'
+                      }}
+                    >
+                      {child}
+                    </div>
+                  );
+                })}
+              </div>
+              <button
+                onClick={() => {
+                  this.setIndex(activeIndex - 1);
+                }}
+              >
+                上一张
+              </button>
+              <button
+                onClick={() => {
+                  this.setIndex(activeIndex + 1);
+                }}
+              >
+                下一张
+              </button>
+            </div>
+          );
+        }
+      }
+
+      class App extends React.Component {
+        render() {
+          return (
+            <Carousel autoplay width="200">
+              <div>1</div>
+              <div>2</div>
+              <div>3</div>
+              <div>4</div>
+              <div>5</div>
+            </Carousel>
+          );
+        }
+      }
+      ReactDOM.render(<App />, document.getElementById('app'));
+    </script>
+  </body>
+</html>

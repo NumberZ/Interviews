@@ -4,7 +4,6 @@ var nextGreaterElements = function(nums) {
   const result = [...new Array(length)].map(() => -1);
   for (let i = 0; i < length * 2; i++) {
     const index = i % length;
-    debugger
     while (stack.length !== 0 && nums[index] > nums[stack[stack.length - 1]]) {
       result[stack.pop()] = nums[index];
     }
